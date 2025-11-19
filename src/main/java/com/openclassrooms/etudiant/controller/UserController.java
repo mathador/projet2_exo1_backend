@@ -37,5 +37,4 @@ public class UserController {
                 .httpOnly(true).secure(true).path("/").sameSite("Strict").build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
-
 }
