@@ -28,9 +28,13 @@ public class Student {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    @NotBlank
+    @Column(name = "firstName", nullable = false)
+    private String firstName;
+
+    @NotBlank
+    @Column(name = "lastName", nullable = false)
+    private String lastName;
 
     @NotBlank
     @Column(name = "level", nullable = false)

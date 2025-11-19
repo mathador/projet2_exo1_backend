@@ -1,17 +1,21 @@
 package com.openclassrooms.etudiant.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.openclassrooms.etudiant.entities.Student;
 import com.openclassrooms.etudiant.repository.StudentRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -20,6 +24,10 @@ public class StudentService {
 
     // Save operation
     public Student saveStudent(Student student) {
+        Assert.notNull(student, "Student must not be null");
+        log.info("Registering new student");
+        student.setCreatedAt(LocalDateTime.now());
+        student.setUpdatedAt(LocalDateTime.now());
         return studentRepository.save(student);
     }
 
@@ -35,6 +43,7 @@ public class StudentService {
         Optional<Student> existing = studentRepository.findById(studentId);
         if (existing.isPresent()) {
             Student s = existing.get();
+            s.setUpdatedAt(LocalDateTime.now());
             s.setLevel(student.getLevel());
             s.setMatter(student.getMatter());
             return studentRepository.save(s);

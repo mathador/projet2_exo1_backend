@@ -24,10 +24,10 @@ public class StudentController {
     private final StudentService studentService;
 
     // Save operation
-    @PostMapping()
-
+    @PostMapping("/api/students")
     public Student saveStudent(
-            @Valid @RequestBody Student student) {
+            @Valid @RequestBody Student student
+        ) {
         return studentService.saveStudent(student);
     }
 
@@ -39,7 +39,7 @@ public class StudentController {
     }
 
     // Update operation
-    @PutMapping("/{id}")
+    @PutMapping("/api/students/{id}")
 
     public Student updateStudent(@RequestBody Student student,
             @PathVariable("id") Long studentId) {
@@ -47,7 +47,7 @@ public class StudentController {
     }
 
     // Delete operation
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/students/{id}")
 
     public String deleteStudentById(@PathVariable("id") Long studentId) {
         studentService.deleteStudentById(studentId);
