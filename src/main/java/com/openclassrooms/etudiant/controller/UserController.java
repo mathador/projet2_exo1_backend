@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
+// ResponseCookie removed: token returned in Authorization header instead
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,16 +25,14 @@ public class UserController {
     private final UserDtoMapper userDtoMapper;
 
     @PostMapping("/api/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDTO registerDTO) {
         userService.register(userDtoMapper.toEntity(registerDTO));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/api/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
         String jwtToken = userService.login(loginRequestDTO.getLogin(), loginRequestDTO.getPassword());
-        ResponseCookie cookie = ResponseCookie.from("SESSION", jwtToken)
-                .httpOnly(true).secure(true).path("/").sameSite("Strict").build();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken).build();
     }
 }
