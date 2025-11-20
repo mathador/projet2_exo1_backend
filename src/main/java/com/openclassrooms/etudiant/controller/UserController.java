@@ -5,11 +5,12 @@ import com.openclassrooms.etudiant.dto.RegisterDTO;
 import com.openclassrooms.etudiant.mapper.UserDtoMapper;
 import com.openclassrooms.etudiant.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-// ResponseCookie removed: token returned in Authorization header instead
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,8 +32,23 @@ public class UserController {
     }
 
     @PostMapping("/api/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         String jwtToken = userService.login(loginRequestDTO.getLogin(), loginRequestDTO.getPassword());
-        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken).build();
+        boolean secure = request.isSecure();
+        ResponseCookie cookie = ResponseCookie.from("SESSION", jwtToken)
+                .httpOnly(true)
+                .secure(secure)
+                .path("/")
+                .sameSite("Strict")
+                .build();
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
+                .build();
+        // plus sécurisé de passer par un cookie httponly (car non accessible depuis le
+        // code) que par header
+        // return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " +
+        // jwtToken).build();
     }
 }
