@@ -44,6 +44,8 @@ public class StudentService {
         if (existing.isPresent()) {
             Student s = existing.get();
             s.setUpdatedAt(LocalDateTime.now());
+            s.setFirstName(student.getFirstName());
+            s.setLastName(student.getLastName());
             s.setLevel(student.getLevel());
             s.setMatter(student.getMatter());
             return studentRepository.save(s);
