@@ -1,6 +1,7 @@
 package com.openclassrooms.etudiant.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +26,7 @@ public class StudentController {
 
     // Save operation
     @PostMapping("/api/students")
-    public Student saveStudent(
-            @Valid @RequestBody Student student
-        ) {
+    public Student saveStudent(@Valid @RequestBody Student student) {
         return studentService.saveStudent(student);
     }
 
@@ -38,9 +37,14 @@ public class StudentController {
         return studentService.fetchStudentList();
     }
 
+    // Read operation
+    @GetMapping("/api/students/{id}")
+    public Optional<Student> getStudentById(@PathVariable("id") Long studentId) {
+        return studentService.getStudentById(studentId);
+    }
+
     // Update operation
     @PutMapping("/api/students/{id}")
-
     public Student updateStudent(@RequestBody Student student,
             @PathVariable("id") Long studentId) {
         return studentService.updateStudent(student, studentId);
@@ -48,7 +52,6 @@ public class StudentController {
 
     // Delete operation
     @DeleteMapping("/api/students/{id}")
-
     public String deleteStudentById(@PathVariable("id") Long studentId) {
         studentService.deleteStudentById(studentId);
         return "Deleted Successfully";

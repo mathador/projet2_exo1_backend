@@ -6,6 +6,7 @@ import com.openclassrooms.etudiant.mapper.UserDtoMapper;
 import com.openclassrooms.etudiant.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpHeaders;
@@ -50,5 +51,16 @@ public class UserController {
         // code) que par header
         // return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " +
         // jwtToken).build();
+    }
+
+    @PostMapping("/api/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("SESSION", "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().build();
     }
 }

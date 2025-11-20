@@ -49,7 +49,7 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // No auth needed on :
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/api/register", "/api/login").permitAll()
+                        .requestMatchers("/api/register", "/api/login", "/api/logout").permitAll()
                         // All other routes require JWT authentication
                         .anyRequest().authenticated()
                 )

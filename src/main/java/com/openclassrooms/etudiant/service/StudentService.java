@@ -38,6 +38,10 @@ public class StudentService {
         return list;
     }
 
+    public Optional<Student> getStudentById(Long studentId) {
+        return studentRepository.findById(studentId);
+    }
+
     // Update operation
     public Student updateStudent(Student student, Long studentId) {
         Optional<Student> existing = studentRepository.findById(studentId);
