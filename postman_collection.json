@@ -149,6 +149,62 @@
 			"response": []
 		},
 		{
+			"name": "un étudiant qui nexiste pas",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{JWT_Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/students/0",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "un étudiant qui existe",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{JWT_Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/students/102",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"102"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "create student",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
@@ -222,14 +278,14 @@
 					"raw": "{\r\n    \"firstName\": \"catherine\",\r\n    \"lastName\": \"Mac\",\r\n    \"level\": \"a\",\r\n    \"matter\": \"Biologie\"\r\n}"
 				},
 				"url": {
-					"raw": "{{url}}/api/students/52",
+					"raw": "{{url}}/api/students/252",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"api",
 						"students",
-						"52"
+						"252"
 					]
 				}
 			},
@@ -266,14 +322,14 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{url}}/api/students/52",
+					"raw": "{{url}}/api/students/252",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"api",
 						"students",
-						"52"
+						"252"
 					]
 				}
 			},
