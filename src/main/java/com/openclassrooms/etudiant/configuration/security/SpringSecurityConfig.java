@@ -1,7 +1,6 @@
 package com.openclassrooms.etudiant.configuration.security;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,11 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-    @Autowired
-    private CustomUserDetailService customUserDetailService;
-
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+    public DaoAuthenticationProvider authenticationProvider(CustomUserDetailService customUserDetailService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(customUserDetailService);
         authProvider.setPasswordEncoder(passwordEncoder());
@@ -41,24 +37,25 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+        HttpSecurity http, 
+        CustomUserDetailService customUserDetailService,
+        JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
+                .authenticationProvider(authenticationProvider(customUserDetailService))
                 .authorizeHttpRequests(authorize -> authorize
                         // No auth needed on :
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/api/register", "/api/login").permitAll()
-                        // Others protected routes will be added here.
+                        .requestMatchers("/api/register", "/api/login", "/api/logout").permitAll()
+                        // All other routes require JWT authentication
                         .anyRequest().authenticated()
                 )
-                // .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(
-                        (request, response, exception) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
-                        }));
+                        (request, response, exception) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage())));
         return http.build();
     }
 

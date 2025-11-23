@@ -2,16 +2,13 @@ package com.openclassrooms.etudiant.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class RegisterDTO {
+@EqualsAndHashCode(callSuper=true)
+public class RegisterDTO extends LoginRequestDTO {
     @NotBlank
     private String firstName;
     @NotBlank
     private String lastName;
-    @NotBlank
-    private String login;
-    @NotBlank
-    private String password;
-
 }

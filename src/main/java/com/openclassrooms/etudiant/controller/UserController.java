@@ -5,8 +5,13 @@ import com.openclassrooms.etudiant.dto.RegisterDTO;
 import com.openclassrooms.etudiant.mapper.UserDtoMapper;
 import com.openclassrooms.etudiant.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,16 +27,40 @@ public class UserController {
     private final UserDtoMapper userDtoMapper;
 
     @PostMapping("/api/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDTO registerDTO) {
         userService.register(userDtoMapper.toEntity(registerDTO));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/api/login")
-    public ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         String jwtToken = userService.login(loginRequestDTO.getLogin(), loginRequestDTO.getPassword());
-        return ResponseEntity.ok(jwtToken);
+        boolean secure = request.isSecure();
+        ResponseCookie cookie = ResponseCookie.from("SESSION", jwtToken)
+                .httpOnly(true)
+                .secure(secure)
+                .path("/")
+                .sameSite("Strict")
+                .build();
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
+                .build();
+        // plus sécurisé de passer par un cookie httponly (car non accessible depuis le
+        // code) que par header
+        // return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " +
+        // jwtToken).build();
     }
 
-
+    @PostMapping("/api/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("SESSION", "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().build();
+    }
 }

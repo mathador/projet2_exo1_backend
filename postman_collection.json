@@ -1,0 +1,339 @@
+{
+	"info": {
+		"_postman_id": "83a7a8ad-833f-4f67-9aaf-3018f5701f6d",
+		"name": "exo1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15419095",
+		"_collection_link": "https://universal-spaceship-512892.postman.co/workspace/projet2_exo1~6a190dfb-305c-4551-acbd-729707ad065a/collection/15419095-83a7a8ad-833f-4f67-9aaf-3018f5701f6d?action=share&source=collection_link&creator=15419095"
+	},
+	"item": [
+		{
+			"name": "register",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"d3\",\r\n    \"lastName\": \"d13\",\r\n    \"login\": \"d23\",\r\n    \"password\": \"d13\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\": \"d\",\r\n    \"password\": \"d\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\": \"d\",\r\n    \"password\": \"d\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/logout",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list of students",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{JWT_Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/students",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "un étudiant qui nexiste pas",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{JWT_Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/students/0",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "un étudiant qui existe",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{JWT_Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/students/102",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"102"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create student",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{JWT_Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"chris1\",\r\n    \"lastName\": \"mac1\",\r\n    \"level\": \"D\",\r\n    \"matter\": \"Maths\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/students",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "modification student",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{JWT_Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"catherine\",\r\n    \"lastName\": \"Mac\",\r\n    \"level\": \"a\",\r\n    \"matter\": \"Biologie\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/students/252",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"252"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete student",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"accept": true,
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{JWT_Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/students/252",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"students",
+						"252"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
