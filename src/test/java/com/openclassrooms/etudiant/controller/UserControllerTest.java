@@ -33,9 +33,13 @@ public class UserControllerTest {
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
 
-
     @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:8.0");
+    private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
+            .withDatabaseName("etudiant_db")
+            .withUsername("etudiant_db")
+            .withPassword("etudiant_db")
+            .withReuse(false); // WARN tc.mysql:8.0 -- Reuse was requested but the environment does not support
+                               // the reuse of containers
 
     @Autowired
     private UserService userService;
