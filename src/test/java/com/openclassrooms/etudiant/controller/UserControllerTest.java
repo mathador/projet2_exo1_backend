@@ -21,6 +21,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -119,5 +120,17 @@ public class UserControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    public void logoutSuccessful() throws Exception {
+        // GIVEN
+        // WHEN & THEN
+        // le cookie renvoyé doit avoir une durée de vie de 0 seconde
+        // et une SESSIONvide
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/logout"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(cookie().value("SESSION", ""))
+                .andExpect(cookie().maxAge("SESSION", 0));
     }
 }
