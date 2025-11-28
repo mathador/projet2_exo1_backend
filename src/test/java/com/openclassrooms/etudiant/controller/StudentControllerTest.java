@@ -19,8 +19,6 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.Duration;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -35,11 +33,7 @@ class StudentControllerTest {
     private static final String MATTER = "Math";
 
     @Container
-    private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:lts")
-            // .withDatabaseName("etudiant_db")
-            // .withUsername("etudiant")
-            // .withPassword("etudiant")
-            .withStartupTimeout(Duration.ofMinutes(5))
+    private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
             .withTmpFs(java.util.Collections.singletonMap("/var/lib/mysql", "rw"));
 
 
