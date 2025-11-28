@@ -8,12 +8,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,10 +26,14 @@ public class UserServiceTest {
     private static final String LAST_NAME = "Doe";
     private static final String LOGIN = "LOGIN";
     private static final String PASSWORD = "PASSWORD";
+    private static final String TOKEN = "TOKEN";
     @Mock
     private UserRepository userRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JwtService jwtService;
     @InjectMocks
     private UserService userService;
 
@@ -74,5 +80,50 @@ public class UserServiceTest {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userCaptor.capture());
         assertThat(userCaptor.getValue()).isEqualTo(user);
+    }
+
+    @Test
+    public void test_login_with_null_login_throws_exception() {
+        assertThrows(IllegalArgumentException.class, () -> userService.login(null, PASSWORD));
+    }
+
+    @Test
+    public void test_login_with_null_password_throws_exception() {
+        assertThrows(IllegalArgumentException.class, () -> userService.login(LOGIN, null));
+    }
+
+    @Test
+    public void test_login_with_non_existing_user_throws_exception() {
+        // Arrange
+        when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
+        // Act & Assert
+        assertThrows(BadCredentialsException.class, () -> userService.login(LOGIN, PASSWORD));
+    }
+
+    @Test
+    public void test_login_with_wrong_password_throws_exception() {
+        // Arrange
+        User user = new User();
+        user.setLogin(LOGIN);
+        user.setPassword(PASSWORD);
+        when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(PASSWORD, PASSWORD)).thenReturn(false);
+        // Act & Assert
+        assertThrows(BadCredentialsException.class, () -> userService.login(LOGIN, PASSWORD));
+    }
+
+    @Test
+    public void test_login_successful() {
+        // Arrange
+        User user = new User();
+        user.setLogin(LOGIN);
+        user.setPassword(PASSWORD);
+        when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
+        when(jwtService.generateToken(user)).thenReturn(TOKEN);
+        // Act
+        String token = userService.login(LOGIN, PASSWORD);
+        // Assert
+        assertThat(token).isEqualTo(TOKEN);
     }
 }

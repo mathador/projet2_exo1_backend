@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.openclassrooms.etudiant.entities.Student;
 
 @Repository
-public interface StudentRepository extends CrudRepository<Student, Long>{
+public interface StudentRepository extends CrudRepository<Student, Long> {
 }

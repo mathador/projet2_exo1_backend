@@ -1,6 +1,7 @@
 package com.openclassrooms.etudiant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.etudiant.dto.LoginRequestDTO;
 import com.openclassrooms.etudiant.dto.RegisterDTO;
 import com.openclassrooms.etudiant.entities.User;
 import com.openclassrooms.etudiant.repository.UserRepository;
@@ -21,11 +22,14 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.emptyString;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @Testcontainers
-public class UserControllerTest {
+class UserControllerTest {
 
     private static final String URL = "/api/register";
     private static final String FIRST_NAME = "John";
@@ -33,9 +37,9 @@ public class UserControllerTest {
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
 
-
     @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
+    private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
+            .withTmpFs(java.util.Collections.singletonMap("/var/lib/mysql", "rw"));
 
     @Autowired
     private UserService userService;
@@ -67,9 +71,9 @@ public class UserControllerTest {
 
         // WHEN
         mockMvc.perform(MockMvcRequestBuilders.post(URL)
-                        .content(objectMapper.writeValueAsString(registerDTO))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(registerDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -92,9 +96,9 @@ public class UserControllerTest {
 
         // WHEN
         mockMvc.perform(MockMvcRequestBuilders.post(URL)
-                        .content(objectMapper.writeValueAsString(registerDTO))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(registerDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -110,10 +114,67 @@ public class UserControllerTest {
 
         // WHEN
         mockMvc.perform(MockMvcRequestBuilders.post(URL)
-                        .content(objectMapper.writeValueAsString(registerDTO))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(registerDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    public void logoutSuccessful() throws Exception {
+        // GIVEN
+        // WHEN & THEN
+        // le cookie renvoyé doit avoir une durée de vie de 0 seconde
+        // et une SESSIONvide
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/logout"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(cookie().value("SESSION", ""))
+                .andExpect(cookie().maxAge("SESSION", 0));
+    }
+
+    @Test
+    public void loginSuccessful() throws Exception {
+        // GIVEN: un utilisateur enregistré
+        RegisterDTO registerDTO = new RegisterDTO();
+        registerDTO.setFirstName(FIRST_NAME);
+        registerDTO.setLastName(LAST_NAME);
+        registerDTO.setLogin(LOGIN);
+        registerDTO.setPassword(PASSWORD);
+        mockMvc.perform(MockMvcRequestBuilders.post(URL)
+                .content(objectMapper.writeValueAsString(registerDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        // WHEN: on tente de se logger
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setLogin(LOGIN);
+        loginRequest.setPassword(PASSWORD);
+
+        // THEN: la connexion réussit et un cookie SESSION est retourné
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+                .content(objectMapper.writeValueAsString(loginRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(cookie().exists("SESSION"))
+                .andExpect(cookie().value("SESSION", not(emptyString())))
+                .andExpect(cookie().httpOnly("SESSION", true))
+                .andExpect(cookie().path("SESSION", "/"));
+    }
+
+    @Test
+    public void loginWithWrongCredentials() throws Exception {
+        // GIVEN: un utilisateur non enregistré
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setLogin("wronglogin");
+        loginRequest.setPassword("wrongpassword");
+
+        // WHEN & THEN: la connexion échoue avec un statut 401
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+                .content(objectMapper.writeValueAsString(loginRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 }

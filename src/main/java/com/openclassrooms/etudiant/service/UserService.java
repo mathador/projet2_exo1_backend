@@ -5,6 +5,7 @@ import com.openclassrooms.etudiant.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 //import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class UserService {
                 // return jwtService.generateToken(userDetails);
             }
         }
-        throw new IllegalArgumentException("Invalid credentials");
+        throw new BadCredentialsException("Invalid credentials");
     }
 
 }
