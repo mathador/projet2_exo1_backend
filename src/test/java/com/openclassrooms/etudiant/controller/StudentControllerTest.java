@@ -19,13 +19,15 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.Duration;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @Testcontainers
-public class StudentControllerTest {
+class StudentControllerTest {
 
     private static final String FIRST_NAME = "John";
     private static final String LAST_NAME = "Doe";
@@ -33,12 +35,13 @@ public class StudentControllerTest {
     private static final String MATTER = "Math";
 
     @Container
-    private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
-            .withDatabaseName("etudiant_db")
-            .withUsername("etudiant_db")
-            .withPassword("etudiant_db")
-            .withReuse(false); // WARN tc.mysql:8.0 -- Reuse was requested but the environment does not support
-                                // the reuse of containers
+    private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:lts")
+            // .withDatabaseName("etudiant_db")
+            // .withUsername("etudiant")
+            // .withPassword("etudiant")
+            .withStartupTimeout(Duration.ofMinutes(5))
+            .withTmpFs(java.util.Collections.singletonMap("/var/lib/mysql", "rw"));
+
 
     @Autowired
     private StudentService studentService;
@@ -49,8 +52,10 @@ public class StudentControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    // apparemment non necessaire à partir de springboot 3.1+
     @DynamicPropertySource
     static void configureTestProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
         registry.add("spring.datasource.url", () -> mySQLContainer.getJdbcUrl());
         registry.add("spring.datasource.username", () -> mySQLContainer.getUsername());
         registry.add("spring.datasource.password", () -> mySQLContainer.getPassword());
