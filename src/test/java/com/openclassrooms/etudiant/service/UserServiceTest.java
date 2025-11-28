@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -100,7 +101,7 @@ public class UserServiceTest {
         // Arrange
         when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
         // Act & Assert
-        assertThrows(IllegalArgumentException.class,()->userService.login(LOGIN,PASSWORD));
+        assertThrows(BadCredentialsException.class,()->userService.login(LOGIN,PASSWORD));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class UserServiceTest {
         when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(PASSWORD,PASSWORD)).thenReturn(false);
         // Act & Assert
-        assertThrows(IllegalArgumentException.class,()->userService.login(LOGIN,PASSWORD));
+        assertThrows(BadCredentialsException.class,()->userService.login(LOGIN,PASSWORD));
     }
 
     @Test
