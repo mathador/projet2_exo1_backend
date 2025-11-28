@@ -112,14 +112,20 @@ Pour exécuter les tests Junit, il faut :
 - dans une console, se placer à la racine du projet et exécuter la commande Maven suivante :
 
 ```
-mvn clean test
+mvn clean package
 ```
 
 ## Fonctionnalités portées
 
     - API de création d'un utilisateur (agent de la bibliothèque)
-    - API d'authentification d'un utilisateur (à faire)
-    - APIs CRUD des étudiants de la bibliothèque (à faire)
+    - API d'authentification d'un utilisateur 
+    - APIs CRUD des étudiants de la bibliothèque 
+
+Le rapport se situe dans:
+
+```
+target\site\jacoco
+```
 
 
 ## Écrans ou blocs concernés
