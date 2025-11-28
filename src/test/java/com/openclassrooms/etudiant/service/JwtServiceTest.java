@@ -13,34 +13,49 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtServiceTest {
+class JwtServiceTest {
 
     @InjectMocks
     private JwtService jwtService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ReflectionTestUtils.setField(jwtService, "jwtSecret", "testsecret");
     }
 
     @Test
-    public void testGenerateAndExtractUsername() {
-        UserDetails userDetails = User.withUsername("testuser").password("password").authorities("USER").build();
+    void testGenerateAndExtractUsername() {
+        // GIVEN
+        UserDetails userDetails = User
+                .withUsername("testuser")
+                .password("password")
+                .authorities("USER")
+                .build();
+        // WHEN
         String token = jwtService.generateToken(userDetails);
         String username = jwtService.extractUsername(token);
+        // THEN
         assertThat(username).isEqualTo("testuser");
     }
 
     @Test
-    public void testValidateToken() {
-        UserDetails userDetails = User.withUsername("testuser").password("password").authorities("USER").build();
+    void testValidateToken() {
+        // GIVEN
+        UserDetails userDetails = User
+                .withUsername("testuser")
+                .password("password")
+                .authorities("USER")
+                .build();
+        // WHEN
         String token = jwtService.generateToken(userDetails);
         boolean isValid = jwtService.validateToken(token);
+        // THEN
         assertThat(isValid).isTrue();
     }
 
     @Test
-    public void testValidateToken_Expired() throws InterruptedException {
+    void testValidateToken_Expired() throws InterruptedException {
+        // GIVEN
         ReflectionTestUtils.setField(jwtService, "jwtSecret", "testsecret");
         // token generated with 1 sec expiration for testing
         long now = System.currentTimeMillis() / 1000L;
@@ -52,27 +67,36 @@ public class JwtServiceTest {
         String unsignedToken = String.format("%s.%s", header, payload);
         String signature = ReflectionTestUtils.invokeMethod(jwtService, "hmacSha256", unsignedToken, "testsecret");
         String token = unsignedToken + "." + signature;
-
+        // WHEN
         Thread.sleep(2000); // Wait for token to expire
 
         boolean isValid = jwtService.validateToken(token);
+        // THEN
         assertThat(isValid).isFalse();
     }
 
-
     @Test
-    public void testValidateToken_InvalidSignature() {
-        UserDetails userDetails = User.withUsername("testuser").password("password").authorities("USER").build();
+    void testValidateToken_InvalidSignature() {
+        // GIVEN
+        UserDetails userDetails = User
+                .withUsername("testuser")
+                .password("password")
+                .authorities("USER")
+                .build();
         String token = jwtService.generateToken(userDetails);
-        // Tamper with the token
+        // WHEN
+        // On falsifie la signature du token
         String tamperedToken = token.substring(0, token.length() - 5) + "abcde";
         boolean isValid = jwtService.validateToken(tamperedToken);
+        // THEN
         assertThat(isValid).isFalse();
     }
 
     @Test
-    public void testExtractUsername_InvalidToken() {
+    void testExtractUsername_InvalidToken() {
+        // GIVEN
         String invalidToken = "invalid.token";
+        // WHEN & THEN
         assertThatThrownBy(() -> jwtService.extractUsername(invalidToken))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Last unit does not have enough valid bits");

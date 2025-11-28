@@ -8,8 +8,7 @@ import org.mapstruct.ReportingPolicy;
 import org.springframework.stereotype.Component;
 
 @Component
-@Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.ERROR)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserDtoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

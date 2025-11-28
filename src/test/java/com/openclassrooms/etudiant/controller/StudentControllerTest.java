@@ -38,7 +38,6 @@ class StudentControllerTest {
     private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
             .withTmpFs(java.util.Collections.singletonMap("/var/lib/mysql", "rw"));
 
-
     @Autowired
     private StudentService studentService;
     @Autowired
@@ -60,12 +59,12 @@ class StudentControllerTest {
     }
 
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
         studentRepository.deleteAll();
     }
 
     @Test
-    public void testSaveStudent() throws Exception {
+    void testSaveStudent() throws Exception {
         // GIVEN
         Student student = new Student();
         student.setFirstName(FIRST_NAME);
@@ -87,7 +86,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void testFetchStudentList() throws Exception {
+    void testFetchStudentList() throws Exception {
         // GIVEN
         Student student1 = new Student();
         student1.setFirstName(FIRST_NAME);
@@ -113,7 +112,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void testGetStudentById() throws Exception {
+    void testGetStudentById() throws Exception {
         // GIVEN
         Student student = new Student();
         student.setFirstName(FIRST_NAME);
@@ -130,7 +129,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void testGetStudentById_NotFound() throws Exception {
+    void testGetStudentById_NotFound() throws Exception {
         // GIVEN
         // No student saved
 
@@ -141,7 +140,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void testUpdateStudent() throws Exception {
+    void testUpdateStudent() throws Exception {
         // GIVEN
         Student student = new Student();
         student.setFirstName(FIRST_NAME);
@@ -168,7 +167,7 @@ class StudentControllerTest {
     }
 
     @Test
-    public void testDeleteStudentById() throws Exception {
+    void testDeleteStudentById() throws Exception {
         // GIVEN
         Student student = new Student();
         student.setFirstName(FIRST_NAME);

@@ -38,9 +38,9 @@ public class SpringSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-        HttpSecurity http, 
-        CustomUserDetailService customUserDetailService,
-        JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+            HttpSecurity http,
+            CustomUserDetailService customUserDetailService,
+            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -51,11 +51,12 @@ public class SpringSecurityConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/register", "/api/login", "/api/logout").permitAll()
                         // All other routes require JWT authentication
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthenticationFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthenticationFilter,
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(
-                        (request, response, exception) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage())));
+                        (request, response, exception) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                exception.getMessage())));
         return http.build();
     }
 

@@ -83,52 +83,46 @@ public class UserServiceTest {
     }
 
     @Test
-    public void test_login_with_null_login_throws_exception()
-    {
-        assertThrows(IllegalArgumentException.class,()->userService.login(null,PASSWORD));
+    public void test_login_with_null_login_throws_exception() {
+        assertThrows(IllegalArgumentException.class, () -> userService.login(null, PASSWORD));
     }
 
     @Test
-    public void test_login_with_null_password_throws_exception()
-    {
-        assertThrows(IllegalArgumentException.class,()->userService.login(LOGIN,null));
+    public void test_login_with_null_password_throws_exception() {
+        assertThrows(IllegalArgumentException.class, () -> userService.login(LOGIN, null));
     }
 
-
     @Test
-    public void test_login_with_non_existing_user_throws_exception()
-    {
+    public void test_login_with_non_existing_user_throws_exception() {
         // Arrange
         when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
         // Act & Assert
-        assertThrows(BadCredentialsException.class,()->userService.login(LOGIN,PASSWORD));
+        assertThrows(BadCredentialsException.class, () -> userService.login(LOGIN, PASSWORD));
     }
 
     @Test
-    public void test_login_with_wrong_password_throws_exception()
-    {
+    public void test_login_with_wrong_password_throws_exception() {
         // Arrange
         User user = new User();
         user.setLogin(LOGIN);
         user.setPassword(PASSWORD);
         when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(PASSWORD,PASSWORD)).thenReturn(false);
+        when(passwordEncoder.matches(PASSWORD, PASSWORD)).thenReturn(false);
         // Act & Assert
-        assertThrows(BadCredentialsException.class,()->userService.login(LOGIN,PASSWORD));
+        assertThrows(BadCredentialsException.class, () -> userService.login(LOGIN, PASSWORD));
     }
 
     @Test
-    public void test_login_successful()
-    {
+    public void test_login_successful() {
         // Arrange
         User user = new User();
         user.setLogin(LOGIN);
         user.setPassword(PASSWORD);
         when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(PASSWORD,PASSWORD)).thenReturn(true);
+        when(passwordEncoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
         when(jwtService.generateToken(user)).thenReturn(TOKEN);
         // Act
-        String token = userService.login(LOGIN,PASSWORD);
+        String token = userService.login(LOGIN, PASSWORD);
         // Assert
         assertThat(token).isEqualTo(TOKEN);
     }

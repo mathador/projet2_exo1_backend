@@ -65,8 +65,7 @@ class CustomUserDetailServiceTest {
         // WHEN
         UsernameNotFoundException exception = assertThrows(
                 UsernameNotFoundException.class,
-                () -> customUserDetailService.loadUserByUsername(login)
-        );
+                () -> customUserDetailService.loadUserByUsername(login));
 
         // THEN
         String expectedMessage = "User Not Found with username: " + login;

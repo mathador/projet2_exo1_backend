@@ -48,5 +48,5 @@ public class Student {
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;   
+    private LocalDateTime updatedAt;
 }
